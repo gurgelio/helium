@@ -34,7 +34,7 @@ java {
 
 application {
     // Define the main class for the application.
-    mainClass = "org.example.App"
+    mainClass = "io.gurgel.HeliumCompiler"
 }
 
 tasks.named<Test>("test") {
