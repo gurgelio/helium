@@ -3,7 +3,21 @@ package io.gurgel.lexer;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class LexerTest {
+  @Test
+  void getTokens() {
+    Lexer lexer = new Lexer("let a = 1");
+    List<TokenType> expected = Arrays.asList(TokenType.Id, TokenType.Id, TokenType.Equals, TokenType.Number);
+    List<TokenType> actual = lexer.getTokens().stream().map(Token::type).toList();
+
+    for (int i = 0; i < expected.size(); i++) {
+      assertEquals(expected.get(i), actual.get(i));
+    }
+  }
+
   @Test
   void parseId() {
     Lexer lexer = new Lexer("let");
