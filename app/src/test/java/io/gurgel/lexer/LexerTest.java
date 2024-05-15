@@ -10,7 +10,7 @@ public class LexerTest {
   @Test
   void getTokens() {
     Lexer lexer = new Lexer("let a = 1");
-    List<TokenType> expected = Arrays.asList(TokenType.Id, TokenType.Id, TokenType.Equals, TokenType.Number);
+    List<TokenType> expected = Arrays.asList(TokenType.Let, TokenType.Id, TokenType.Equals, TokenType.Number);
     List<TokenType> actual = lexer.getTokens().stream().map(Token::type).toList();
 
     for (int i = 0; i < expected.size(); i++) {
@@ -20,7 +20,7 @@ public class LexerTest {
 
   @Test
   void parseId() {
-    Lexer lexer = new Lexer("let");
+    Lexer lexer = new Lexer("variable");
     Token token = lexer.nextToken();
     assertEquals("let", token.content());
     assertEquals(TokenType.Id, token.type());

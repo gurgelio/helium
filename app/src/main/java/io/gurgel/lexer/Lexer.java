@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import io.gurgel.lexer.Token.Type;
+
 public class Lexer {
   String code;
   Location location = new Location("", 0, 0, 0);
@@ -17,7 +19,7 @@ public class Lexer {
     ArrayList<Token> tokens = new ArrayList<Token>();
     Token currentToken = nextToken();
 
-    while (currentToken.type() != TokenType.Eof) {
+    while (currentToken.type() != Token.Type.Eof) {
       tokens.add(currentToken);
       currentToken = nextToken();
     }
@@ -27,17 +29,17 @@ public class Lexer {
   public Token nextToken() {
     skipWhitespace();
 
-    TokenType type = TokenType.from(getCurrentChar());
+    Token.Type type = Type.from(getCurrentChar());
 
     switch (type) {
-      case TokenType.String:
+      case Type.String:
         return parseString();
-      case TokenType.Id:
+      case Type.Id:
         return parseId();
-      case TokenType.Number:
+      case Type.Number:
         return parseNumber();
-      case TokenType.Eof:
-        return buildToken("\0", TokenType.Eof);
+      case Type.Eof:
+        return buildToken("\0", Type.Eof);
       default:
         return buildToken(getCurrentChar().toString(), type);
     }
@@ -51,7 +53,7 @@ public class Lexer {
       location.index++;
     }
     location.index++;
-    return new Token(code.substring(tokenLocation.index + 1, location.index - 1), TokenType.String, tokenLocation);
+    return new Token(code.substring(tokenLocation.index + 1, location.index - 1), Type.String, tokenLocation);
   }
 
   private Token parseId() {
@@ -59,7 +61,12 @@ public class Lexer {
     while (Character.isAlphabetic(getCurrentChar()) || Character.isDigit(getCurrentChar()) || getCurrentChar() == '_') {
       location.index++;
     }
-    return new Token(code.substring(tokenLocation.index, location.index), TokenType.Id, tokenLocation);
+    String content = code.substring(tokenLocation.index, location.index);
+
+    return new Token(
+        code.substring(tokenLocation.index, location.index),
+        Type.lookupKeyword(content),
+        tokenLocation);
   }
 
   private Token parseNumber() {
@@ -67,10 +74,10 @@ public class Lexer {
     while (Character.isDigit(getCurrentChar())) {
       location.index++;
     }
-    return new Token(code.substring(tokenLocation.index, location.index), TokenType.Number, tokenLocation);
+    return new Token(code.substring(tokenLocation.index, location.index), Type.Number, tokenLocation);
   }
 
-  private Token buildToken(String content, TokenType type) {
+  private Token buildToken(String content, Type type) {
     Location tokenLocation = location.clone();
     location.index += content.length();
     return new Token(content, type, tokenLocation);
